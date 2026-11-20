@@ -1,0 +1,74 @@
+# cheapGPT example configuration (placeholders only).
+#
+# Registers the three independent DeepSeek MCP entries plus the restricted
+# file-mode entry used by the "GPT directs, DeepSeek executes" workflow.
+#
+# Replace EVERY <PLACEHOLDER> with a real absolute path on your machine.
+# Do not commit this file with real paths, and never put a credential or API
+# key in it: the CommandCode key is read at run time from a DPAPI-protected
+# file, never from this config.
+#
+# Sandbox default: the worker runs in "workspace-write" when the environment
+# variable DEEPSEEK_WORKER_SANDBOX_MODE is unset. This example keeps that safe
+# default and does not raise permissions. "danger-full-access" is only accepted
+# as an explicit opt-in for an already authorized workspace.
+
+# ---------------------------------------------------------------------------
+# Standalone executor entries.
+#
+# All three run the SAME script and differ only in the slot they own: each MCP
+# server holds its own single-execution lock, so three entries allow up to
+# three concurrent "execute" calls. Each "start_batch" call adds up to three
+# read-only slots of its own.
+# ---------------------------------------------------------------------------
+
+[mcp_servers.deepseek_worker]
+command = "<NODE_EXE>"                 # Node >= 18, e.g. D:\tools\node\node.exe
+args = [
+  "<REPO>/src/deepseek-worker-mcp.mjs",
+  "<CODEX_BIN_DIR>",                   # dir holding codex.exe, or a codex.exe path
+  "<SECRETS>/credential.dpapi",        # DPAPI-protected CommandCode key
+  "<PWSH_EXE>",                        # PowerShell used only to decrypt the key
+]
+tool_timeout_sec = 350
+
+[mcp_servers.deepseek_worker_2]
+command = "<NODE_EXE>"
+args = [
+  "<REPO>/src/deepseek-worker-mcp.mjs",
+  "<CODEX_BIN_DIR>",
+  "<SECRETS>/credential.dpapi",
+  "<PWSH_EXE>",
+]
+tool_timeout_sec = 350
+
+[mcp_servers.deepseek_worker_3]
+command = "<NODE_EXE>"
+args = [
+  "<REPO>/src/deepseek-worker-mcp.mjs",
+  "<CODEX_BIN_DIR>",
+  "<SECRETS>/credential.dpapi",
+  "<PWSH_EXE>",
+]
+tool_timeout_sec = 350
+
+# ---------------------------------------------------------------------------
+# Restricted file mode: no shell and no directory discovery. It can only read
+# the exact UTF-8 files named in the request and, optionally, propose a
+# replacement for one of them.
+# ---------------------------------------------------------------------------
+
+[mcp_servers.deepseek_files]
+command = "<NODE_EXE>"
+args = [
+  "<REPO>/src/deepseek-files-mcp.mjs",
+  "<SECRETS>/credential.dpapi",
+  "<PWSH_EXE>",
+]
+tool_timeout_sec = 110
+
+# Optional: forward an already-existing DEEPSEEK_WORKER_SANDBOX_MODE from the
+# host environment. env_vars only passes through variables that the host
+# already defines; it does not set them. Left commented so this example keeps
+# the built-in "workspace-write" safe default.
+# env_vars = ["DEEPSEEK_WORKER_SANDBOX_MODE"]

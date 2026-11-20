@@ -1,0 +1,42 @@
+# --- credentials / DPAPI-protected secrets -------------------------------
+*.dpapi
+credential
+credential.*
+credentials
+credentials.*
+secrets/
+*.pem
+*.key
+
+# --- environment files ----------------------------------------------------
+.env
+.env.*
+*.env
+env.local
+
+# --- runtime state: sessions, runs, backups, scratch ---------------------
+sessions/
+runs/
+scratch/
+tmp/
+.tmp/
+*.bak
+*.backup
+*.orig
+*.before-*
+
+# --- local config copies (keep only the example) --------------------------
+config.toml
+config.local.toml
+*.local.toml
+
+# --- logs -----------------------------------------------------------------
+*.log
+logs/
+
+# --- editor / OS ----------------------------------------------------------
+.vscode/
+.idea/
+Thumbs.db
+Desktop.ini
+.DS_Store
